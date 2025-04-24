@@ -15,8 +15,8 @@
     </div>
 
     <div class="py-2 d-flex justify-content-between">
-      <span class="fs-6">Séries em alta</span>
-      <span class="fs-6"><i class="bi bi-aspect-ratio"></i></span>
+      <span class="fs-6">Séries em alta hoje</span>
+      <router-link to="/trendingSeries"><span class="fs-6"><i class="bi bi-aspect-ratio"></i></span></router-link>
     </div>
     <div class="scroll-container">
       <img
@@ -39,32 +39,33 @@ export default {
       imageBaseUrl: "https://image.tmdb.org/t/p/w500",
     };
   },
+  methods: {
+    async loadData() {
+      try {
+        await Promise.all([this.loadFavorites(), this.loadTrending()]);
+      } catch (error) {
+        console.error("Erro ao carregar dados:", error);
+      }
+    },
+    async loadFavorites() {
+      const res = await fetch(
+        "http://localhost:8080/api/favoritos?accountId=20393076&sessionId=f281d9b1bee0ddab6c6a15a6363e1a02b1b669d7"
+      );
+      const data = await res.json();
+      // console.log("Dados recebidos dos favoritos:", data);
+      this.favorites = data;
+    },
+    async loadTrending() {
+      const res = await fetch(
+        "http://localhost:8080/api/tendencias?accountId=20393076&sessionId=f281d9b1bee0ddab6c6a15a6363e1a02b1b669d7"
+      );
+      const data = await res.json();
+      // console.log("Dados das tendências:", data);
+      this.trendingShows = data;
+    },
+  },
   mounted() {
-    // Carregar séries favoritas
-    fetch(
-      "http://localhost:8080/api/favoritos?accountId=20393076&sessionId=f281d9b1bee0ddab6c6a15a6363e1a02b1b669d7"
-    )
-      .then((response) => response.json())
-      .then((data) => {
-        console.log("Dados recebidos dos favoritos:", data);
-        this.favorites = data.results;
-      })
-      .catch((error) => {
-        console.error("Erro ao carregar favoritos:", error);
-      });
-
-    // Carregar séries em alta
-    fetch(
-      "http://localhost:8080/api/tendencias?accountId=20393076&sessionId=f281d9b1bee0ddab6c6a15a6363e1a02b1b669d7"
-    )
-      .then((response) => response.json())
-      .then((data) => {
-        console.log("Dados das tendências:", data);
-        this.trendingShows = data; // Assume que o backend retorna a lista completa de tendências
-      })
-      .catch((error) => {
-        console.error("Erro ao carregar as tendências:", error);
-      });
+    this.loadData();
   },
 };
 </script>

@@ -14,6 +14,11 @@ const routes = [
     component: FavView
   },
   {
+    path: '/trendingSeries',
+    name: 'trendingSeries',
+    component: trendingSeriesView
+  },
+  {
     path: '/about',
     name: 'about',
     // route level code-splitting
